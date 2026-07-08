@@ -29,10 +29,10 @@ sudo peaktop            # required for temperature, fan, and power metrics
 
 | Key | Action |
 |---|---|
-| `1`–`5` | Switch tabs |
+| `1`-`5` | Switch tabs |
 | `t` | Cycle theme (Dark → Light → Dracula) |
 | `+` / `-` | Increase / decrease tick rate |
-| `j` / `k` or `↓` / `↑` | Scroll process list |
+| `j` / `k` or arrows | Scroll process list |
 | `h` | Toggle help overlay |
 | `q` / `Ctrl+C` | Quit (with save/discard log prompt) |
 
@@ -48,27 +48,12 @@ sudo peaktop            # required for temperature, fan, and power metrics
 
 **Battery** — Charge percentage bar, health, cycle count, time remaining, design capacity. Hidden on desktop systems without batteries.
 
-## Features
-
-- **CPU** — Per-core usage with P/E cluster averages, core heatmap blocks (red/yellow/green/grey), per-core labels, frequency, 60-sample sparkline
-- **GPU** — Usage gauge, active frequency, VRAM used/total, sparkline
-- **ANE** — Apple Neural Engine utilization (chip-dependent, shows "unavailable" when not exposed)
-- **Memory** — Wired/active/compressed bar with breakdown, swap usage, pressure percentage
-- **Network** — Total throughput plus per-interface RX/TX rates
-- **Disk** — Read/write bytes per second, IOPS
-- **Thermal** — Pressure level with percentage, CPU/GPU temperatures, fan RPM bars with history sparkline
-- **Battery** — Charge level, charging status, health (with effective mAh when degraded), cycle count, time remaining
-- **Power** — Package/CPU/GPU/ANE/DRAM wattage breakdown (sudo required)
-- **Alerts** — Configurable thresholds for thermal, battery, memory, GPU with cooldown periods
-- **Themes** — Dark, Light, and Dracula — toggle at runtime or set in config
-- **CSV Logging** — All metrics saved to `~/.peaktop/logs/YYYY-MM-DD.csv`, prompt to save or discard on quit
-
 ## Comparison
 
 | Feature | peaktop | asitop | btop | htop |
 |---|---|---|---|---|
 | CPU P/E-core breakdown | ✅ | ✅ | ❌ | ❌ |
-| Per-core heatmap | ✅ | ❌ | ❌ | ❌ |
+| Per-core heatmap blocks | ✅ | ❌ | ❌ | ❌ |
 | GPU usage + frequency | ✅ | ✅ | ✅ Basic | ❌ |
 | GPU VRAM | ✅ | ❌ | ❌ | ❌ |
 | ANE usage | ✅ Chip-dependent | ✅ Via power | ❌ | ❌ |
@@ -85,8 +70,23 @@ sudo peaktop            # required for temperature, fan, and power metrics
 | Tabbed interface | ✅ 5 tabs | ❌ Single | ❌ Layout | ❌ |
 | Themes | ✅ 3 | ✅ 8 | ✅ 20+ | ❌ |
 | Mouse support | ❌ | ❌ | ✅ | ❌ |
-| Cross-platform | ❌ Apple Silicon only | ❌ macOS only | ✅ | ✅ |
+| Cross-platform | ❌ Apple Silicon | ❌ macOS only | ✅ All | ✅ All |
 | No root for core metrics | ✅ | ❌ Sudo always | ✅ | ✅ |
+
+## Features
+
+- **CPU** — Per-core usage with P/E cluster averages, core heatmap blocks (red/yellow/green/grey), per-core labels, frequency, 60-sample sparkline
+- **GPU** — Usage gauge, active frequency, VRAM used/total, sparkline
+- **ANE** — Apple Neural Engine utilization (chip-dependent, shows "unavailable" when not exposed)
+- **Memory** — Wired/active/compressed bar with breakdown, swap usage, pressure percentage
+- **Network** — Total throughput plus per-interface RX/TX rates
+- **Disk** — Read/write bytes per second, IOPS
+- **Thermal** — Pressure level with percentage, CPU/GPU temperatures, fan RPM bars with history sparkline
+- **Battery** — Charge level, charging status, health (with effective mAh when degraded), cycle count, time remaining
+- **Power** — Package/CPU/GPU/ANE/DRAM wattage breakdown (sudo required)
+- **Alerts** — Configurable thresholds for thermal, battery, memory, GPU with cooldown periods
+- **Themes** — Dark, Light, and Dracula — toggle at runtime or set in config
+- **CSV Logging** — All metrics saved to `~/.peaktop/logs/YYYY-MM-DD.csv`, prompt to save or discard on quit
 
 ## CSV Logs
 
@@ -94,7 +94,7 @@ Every session writes to `~/.peaktop/logs/`. Each row contains:
 
 `timestamp, cpu%, gpu%, ane%, power_w, cpu_w, gpu_w, ane_w, mem_used, mem_pressure%, swap_used, thermal_pressure, cpu_temp_c, gpu_temp_c, fan_rpm, battery%, charging, network_rx_bps, network_tx_bps`
 
-On quit, you can press `y` to save or `n` to discard the session log.
+On quit, press `y` to save or `n` to discard.
 
 ## Config
 
@@ -119,7 +119,7 @@ Valid themes: `dark`, `light`, `dracula`. You can also cycle themes with the `t`
 
 **M-series Macs** (M1/M2/M3/M4) — Full feature set. Run with `sudo` for temperatures, fan speeds, and power metrics.
 
-**A-series Neo devices** (A14–A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Thermal pressure (`kern.thermalpressure`) is unavailable and shows "N/A". ANE may show "unavailable" if performance counters aren't exposed. These devices use passive cooling (no fans). Process visibility may be limited compared to macOS.
+**A-series Neo devices** (A14-A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Thermal pressure (`kern.thermalpressure`) is unavailable (shows "N/A"). ANE may show "unavailable" if performance counters aren't exposed. These devices use passive cooling (no fans). Process visibility may be limited.
 
 ## License
 
