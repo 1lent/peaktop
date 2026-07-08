@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/brodie/peaktop/internal/throttle"
-	"github.com/brodie/peaktop/internal/types"
-	"github.com/brodie/peaktop/internal/ui/widgets"
+	"github.com/1lent/peaktop/internal/throttle"
+	"github.com/1lent/peaktop/internal/types"
+	"github.com/1lent/peaktop/internal/ui/widgets"
 )
 
 var (

@@ -6,13 +6,13 @@ import (
 
 	"github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/brodie/peaktop/internal/alert"
-	"github.com/brodie/peaktop/internal/apple"
-	"github.com/brodie/peaktop/internal/collector"
-	"github.com/brodie/peaktop/internal/log"
-	"github.com/brodie/peaktop/internal/process"
-	"github.com/brodie/peaktop/internal/throttle"
-	"github.com/brodie/peaktop/internal/types"
+	"github.com/1lent/peaktop/internal/alert"
+	"github.com/1lent/peaktop/internal/apple"
+	"github.com/1lent/peaktop/internal/collector"
+	"github.com/1lent/peaktop/internal/log"
+	"github.com/1lent/peaktop/internal/process"
+	"github.com/1lent/peaktop/internal/throttle"
+	"github.com/1lent/peaktop/internal/types"
 )
 
 const (

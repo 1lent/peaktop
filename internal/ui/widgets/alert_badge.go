@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/brodie/peaktop/internal/types"
+	"github.com/1lent/peaktop/internal/types"
 )
 
 var (

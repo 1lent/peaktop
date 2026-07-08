@@ -7,7 +7,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/brodie/peaktop/internal/ui"
+	"github.com/1lent/peaktop/internal/ui"
 )
 
 func main() {

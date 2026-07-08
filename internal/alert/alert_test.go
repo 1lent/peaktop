@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/brodie/peaktop/internal/types"
+	"github.com/1lent/peaktop/internal/types"
 )
 
 func TestNewAlertEngine(t *testing.T) {

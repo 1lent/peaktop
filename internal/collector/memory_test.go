@@ -3,7 +3,7 @@ package collector
 import (
 	"testing"
 
-	"github.com/brodie/peaktop/internal/apple"
+	"github.com/1lent/peaktop/internal/apple"
 )
 
 func TestMemoryCollectorName(t *testing.T) {

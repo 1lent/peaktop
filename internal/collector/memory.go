@@ -1,8 +1,8 @@
 package collector
 
 import (
-	"github.com/brodie/peaktop/internal/apple"
-	"github.com/brodie/peaktop/internal/types"
+	"github.com/1lent/peaktop/internal/apple"
+	"github.com/1lent/peaktop/internal/types"
 )
 
 const memoryCollectorName = "memory"

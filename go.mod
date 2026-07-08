@@ -1,4 +1,4 @@
-module github.com/brodie/peaktop
+module github.com/1lent/peaktop
 
 go 1.26.5
 

@@ -5,13 +5,13 @@ Apple Silicon system monitor for the terminal.
 ## Install
 
 ```bash
-go install github.com/brodie/peaktop@latest
+go install github.com/1lent/peaktop@latest
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/brodie/peaktop.git
+git clone https://github.com/1lent/peaktop.git
 cd peaktop
 make build
 ```
