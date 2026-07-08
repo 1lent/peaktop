@@ -413,23 +413,20 @@ func (m *Model) renderCoreBars(cpu types.CPUStats) string {
 	var pCores, eCores []string
 	for name, pct := range cpu.PerCore {
 		bar := m.coreBlock(pct)
+		entry := fmt.Sprintf("%s%s %5.1f%%", bar, name, pct)
 		if len(name) > 0 && name[0] == 'P' {
-			pCores = append(pCores, fmt.Sprintf("%s %s", name, bar))
+			pCores = append(pCores, entry)
 		} else if len(name) > 0 && name[0] == 'E' {
-			eCores = append(eCores, fmt.Sprintf("%s %s", name, bar))
+			eCores = append(eCores, entry)
 		}
 	}
 
 	var lines []string
 	if len(pCores) > 0 {
-		lines = append(lines, fmt.Sprintf("  P %s", strings.Join(pCores, " ")))
+		lines = append(lines, "  "+strings.Join(pCores, "  "))
 	}
 	if len(eCores) > 0 {
-		lines = append(lines, fmt.Sprintf("  E %s", strings.Join(eCores, " ")))
-	}
-
-	if cpu.FrequencyMHz > 0 {
-		lines = append(lines, fmt.Sprintf("  Freq: %.0f MHz", cpu.FrequencyMHz))
+		lines = append(lines, "  "+strings.Join(eCores, "  "))
 	}
 
 	return strings.Join(lines, "\n")

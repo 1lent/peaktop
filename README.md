@@ -78,12 +78,12 @@ sudo peaktop            # required for temperature, fan, and power metrics
 
 ## Features
 
-- **CPU** — Per-core usage with P/E cluster averages, core heatmap blocks (red/yellow/green/grey), per-core labels, frequency, 60-sample sparkline
-- **GPU** — Usage gauge, active frequency, VRAM used/total, sparkline
+- **CPU** — P/E cluster breakdown with core counts (2P+4E=6), per-core percentages with heatmap blocks, frequency, 60-sample sparkline
+- **GPU** — Usage gauge, active frequency, temperature, VRAM used/total, sparkline
 - **ANE** — Apple Neural Engine utilization (chip-dependent, shows "unavailable" when not exposed)
 - **Memory** — Wired/active/compressed bar with breakdown, swap usage, pressure percentage
+- **Storage** — Total/used disk capacity (via statfs)
 - **Network** — Total throughput plus per-interface RX/TX rates
-- **Disk** — Read/write bytes per second, IOPS
 - **Thermal** — Pressure level with percentage, CPU/GPU temperatures, fan RPM bars with history sparkline
 - **Battery** — Charge level, charging status, health (with effective mAh when degraded), cycle count, time remaining
 - **Power** — Package/CPU/GPU/ANE/DRAM wattage breakdown (sudo required)
@@ -127,3 +127,14 @@ Valid themes: `dark`, `light`, `dracula`. You can also cycle themes with the `t`
 ## License
 
 MIT
+
+## Acknowledgements
+
+Inspired by and built with reference to these excellent tools:
+
+- [asitop](https://github.com/tlkh/asitop) — The original Apple Silicon CLI monitor (Python)
+- [btop](https://github.com/aristocratos/btop) — Beautiful cross-platform resource monitor (C++)
+- [htop](https://github.com/htop-dev/htop) — The classic interactive process viewer (C)
+- [mactop](https://github.com/context-labs/mactop) — Apple Silicon monitor with process-level GPU metrics (Go)
+- [nvtop](https://github.com/Syllo/nvtop) — GPU process monitor for NVIDIA/AMD/Intel
+- [powermetrics](https://www.unix.com/man-page/osx/1/powermetrics/) — Apple's built-in hardware performance counter utility
