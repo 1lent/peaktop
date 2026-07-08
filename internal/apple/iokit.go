@@ -89,7 +89,7 @@ func GetGPUStats() (*GPUStats, error) {
 }
 
 func getGPUVRAM() (uint64, uint64) {
-	classes := []string{"IOGPU", "IOAccelerator", "AGXAccelerator"}
+	classes := []string{"IOGPU", "IOAccelerator", "AGXAccelerator", "AGXAcceleratorG17P"}
 	for _, className := range classes {
 		cName := C.CString(className)
 		matcher := C.IOServiceMatching(cName)
