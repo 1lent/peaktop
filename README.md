@@ -1,6 +1,8 @@
 # peaktop
 
 > Apple Silicon system monitor for the terminal — real-time CPU, GPU, memory, network, battery, and thermal metrics with zero configuration.
+> <img width="1255" height="486" alt="image" src="https://github.com/user-attachments/assets/bf2e03a2-6ab4-420c-aac0-c2069539fdce" />
+
 
 ## Quick Start
 
