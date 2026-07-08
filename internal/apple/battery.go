@@ -73,17 +73,17 @@ import (
 
 const batteryIOKitClass = "IOPMPowerSource"
 
-func GetBatteryInfo() (percent float64, charging bool, cycleCount int, maxCapacity int, designCapacity int, timeRemaining string, hasBattery bool, err error) {
+func GetBatteryInfo() (percent float64, charging bool, cycleCount int, maxCapacity int, designCapacity int, timeRemaining string, hasBattery bool, voltageMV int, currentMA int, err error) {
 	cName := C.CString(batteryIOKitClass)
 	defer C.free(unsafe.Pointer(cName))
 	matcher := C.IOServiceMatching(cName)
 	if matcher == 0 {
-		return 0, false, 0, 0, 0, "", false, nil
+		return 0, false, 0, 0, 0, "", false, 0, 0, nil
 	}
 
 	service := C.IOServiceGetMatchingService(C.kIOMainPortDefault, C.CFDictionaryRef(matcher))
 	if service == 0 {
-		return 0, false, 0, 0, 0, "", false, nil
+		return 0, false, 0, 0, 0, "", false, 0, 0, nil
 	}
 	defer C.IOObjectRelease(C.io_object_t(service))
 
@@ -120,10 +120,18 @@ func GetBatteryInfo() (percent float64, charging bool, cycleCount int, maxCapaci
 
 	batteryIsPresent := percent > 0 || maxCapacity > 0 || designCapacity > 0
 	if !batteryIsPresent {
-		return 0, false, 0, 0, 0, "", false, nil
+		return 0, false, 0, 0, 0, "", false, 0, 0, nil
 	}
 
 	hasBattery = true
+
+	voltKey := C.CString("Voltage")
+	defer C.free(unsafe.Pointer(voltKey))
+	voltageMV = int(C.batteryReadInt(entry, voltKey))
+
+	ampKey := C.CString("InstantAmperage")
+	defer C.free(unsafe.Pointer(ampKey))
+	currentMA = int(C.batteryReadInt(entry, ampKey))
 
 	timeRemainingKey := C.CString("TimeRemaining")
 	defer C.free(unsafe.Pointer(timeRemainingKey))
@@ -134,5 +142,5 @@ func GetBatteryInfo() (percent float64, charging bool, cycleCount int, maxCapaci
 		timeRemaining = fmt.Sprintf("%dh%dm", hours, mins)
 	}
 
-	return percent, charging, cycleCount, maxCapacity, designCapacity, timeRemaining, hasBattery, nil
+	return percent, charging, cycleCount, maxCapacity, designCapacity, timeRemaining, hasBattery, voltageMV, currentMA, nil
 }

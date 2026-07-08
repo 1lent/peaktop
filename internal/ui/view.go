@@ -382,6 +382,7 @@ func (m *Model) renderBatteryBlock(battery types.BatteryStats) string {
 	return lipgloss.JoinVertical(lipgloss.Top,
 		m.styles.section.Render("Battery"),
 		fmt.Sprintf("  %s %d%% %s", style.Render("█"), battery.Percent, status),
+		m.renderBatteryDrain(battery),
 	)
 }
 
@@ -506,6 +507,16 @@ func (m *Model) renderGPUDetail(gpu types.GPUStats, thermal types.ThermalStats) 
 		return ""
 	}
 	return "  " + strings.Join(parts, "  ")
+}
+
+func (m *Model) renderBatteryDrain(battery types.BatteryStats) string {
+	if battery.Watts <= 0 {
+		return ""
+	}
+	if battery.IsCharging {
+		return fmt.Sprintf("  Charging: +%.1f W", battery.Watts)
+	}
+	return fmt.Sprintf("  Drain: %.1f W", battery.Watts)
 }
 
 func (m *Model) renderDiskStorage(disk types.DiskStats) string {
