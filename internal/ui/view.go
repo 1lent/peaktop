@@ -228,11 +228,6 @@ func (m *Model) renderThermal() string {
 		)
 	}
 
-	parts = append(parts, "",
-		m.styles.section.Render("CPU Timeline"),
-		m.renderSparklineBlock("", m.cpuHistory, m.width),
-	)
-
 	return lipgloss.JoinVertical(lipgloss.Top, parts...)
 }
 
