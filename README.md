@@ -122,7 +122,7 @@ Valid themes: `dark`, `light`, `dracula`. You can also cycle themes with the `t`
 
 **M-series Macs** (M1/M2/M3/M4) — Full feature set. Run with `sudo` for temperatures, fan speeds, and power metrics.
 
-**A-series Neo devices** (A14-A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Thermal pressure (`kern.thermalpressure`) is unavailable (shows "N/A"). ANE may show "unavailable" if performance counters aren't exposed. These devices use passive cooling (no fans). Process visibility may be limited.
+**A-series Neo devices** (A14-A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Temperature sensors, thermal pressure (`kern.thermalpressure`), and fan data are unavailable on these chips (no fans, sensors not exposed via powermetrics). ANE may show "unavailable" if performance counters aren't exposed. Process visibility may be limited. *(The screenshot above was taken on a Neo — temps and fans are absent by design, not a bug.)*
 
 ## License
 
