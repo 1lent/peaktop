@@ -77,6 +77,29 @@ sudo peaktop            # required for temperature, fan, and power metrics
 | Cross-platform | ❌ Apple Silicon | ❌ macOS only | ✅ All | ✅ All |
 | No root for core metrics | ✅ | ❌ Sudo always | ✅ | ✅ |
 
+## Hardware Support by Chip
+
+| Metric | M-series (M1–M4) | A-series Neo (A14–A18) |
+|---|---|---|
+| CPU usage + per-core | ✅ | ✅ |
+| GPU usage | ✅ | ✅ |
+| Memory + swap | ✅ | ✅ |
+| Network per-interface | ✅ | ✅ |
+| Disk IO + storage capacity | ✅ | ✅ |
+| Battery charge + health | ✅ | ✅ |
+| Battery drain rate (W) | ✅ | ✅ |
+| Process list (CPU/MEM) | ✅ | ✅ Partial |
+| CPU frequency | ✅ | ❌ Not exposed |
+| GPU frequency | ✅ | ❌ Not in PerformanceStatistics |
+| GPU VRAM | ✅ | ❌ Not in IOKit |
+| CPU/GPU temperatures | ✅ Sudo | ❌ Not exposed |
+| Fan speeds + bars | ✅ Sudo | ❌ No fans |
+| Power breakdown (W) | ✅ Sudo | ❌ Not exposed |
+| Thermal pressure | ✅ | ❌ sysctl unavailable |
+| ANE utilization | ✅ Chip-dependent | ❌ Not exposed |
+| CSV logging | ✅ | ✅ |
+| Alerts | ✅ | ✅ |
+
 ## Features
 
 - **CPU** — P/E cluster breakdown with core counts (2P+4E=6), per-core percentages with heatmap blocks, frequency, 60-sample sparkline
