@@ -1,7 +1,8 @@
 # peaktop
 
 > Apple Silicon system monitor for the terminal — real-time CPU, GPU, memory, network, battery, and thermal metrics. Built in Go. No root required for core metrics.
-> ![Uploading image.png…]()
+> <img width="2514" height="932" alt="image" src="https://github.com/user-attachments/assets/da1f9d38-cc52-488b-b83e-795777416966" />
+
 
 
 ## Quick Start
