@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -410,39 +411,56 @@ func (m *Model) renderCoreBars(cpu types.CPUStats) string {
 		return ""
 	}
 
-	var pCores, eCores []string
-	for name, pct := range cpu.PerCore {
-		bar := m.coreBlock(pct)
-		entry := fmt.Sprintf("%s%s %5.1f%%", bar, name, pct)
-		if len(name) > 0 && name[0] == 'P' {
-			pCores = append(pCores, entry)
-		} else if len(name) > 0 && name[0] == 'E' {
-			eCores = append(eCores, entry)
-		}
-	}
+	const barW = 10
+	full := lipgloss.NewStyle().Foreground(lipgloss.Color("75"))
+	mid := lipgloss.NewStyle().Foreground(lipgloss.Color("220"))
+	low := lipgloss.NewStyle().Foreground(lipgloss.Color("42"))
+	empty := lipgloss.NewStyle().Foreground(lipgloss.Color("238"))
+	nameStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("248"))
 
 	var lines []string
-	if len(pCores) > 0 {
-		lines = append(lines, "  "+strings.Join(pCores, "  "))
-	}
-	if len(eCores) > 0 {
-		lines = append(lines, "  "+strings.Join(eCores, "  "))
-	}
+	for _, name := range sortedCoreNames(cpu.PerCore) {
+		pct := cpu.PerCore[name]
+		filled := int(pct / 100.0 * float64(barW))
+		if filled > barW {
+			filled = barW
+		}
 
+		var bar string
+		for i := 0; i < barW; i++ {
+			if i < filled {
+				switch {
+				case pct >= 80:
+					bar += full.Render("█")
+				case pct >= 50:
+					bar += mid.Render("▓")
+				default:
+					bar += low.Render("▒")
+				}
+			} else {
+				bar += empty.Render("░")
+			}
+		}
+		lines = append(lines, fmt.Sprintf("  %s%s  %s %5.1f%%", nameStyle.Render(name), bar, bar, pct))
+	}
 	return strings.Join(lines, "\n")
 }
 
-func (m *Model) coreBlock(pct float64) string {
-	switch {
-	case pct >= 80:
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("196")).Render("█")
-	case pct >= 50:
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("220")).Render("▓")
-	case pct >= 20:
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("42")).Render("▒")
-	default:
-		return lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Render("░")
+func sortedCoreNames(perCore map[string]float64) []string {
+	var pNames, eNames, other []string
+	for name := range perCore {
+		if len(name) > 0 && name[0] == 'P' {
+			pNames = append(pNames, name)
+		} else if len(name) > 0 && name[0] == 'E' {
+			eNames = append(eNames, name)
+		} else {
+			other = append(other, name)
+		}
 	}
+	sort.Strings(pNames)
+	sort.Strings(eNames)
+	sort.Strings(other)
+	return append(append(pNames, eNames...), other...)
 }
 
 func (m *Model) renderGPUTemps(thermal types.ThermalStats) string {
