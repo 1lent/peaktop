@@ -1,8 +1,6 @@
 # peaktop
 
-> Apple Silicon system monitor for the terminal — real-time CPU, GPU, memory, network, battery, and thermal metrics with zero configuration.
-> <img width="1255" height="486" alt="image" src="https://github.com/user-attachments/assets/bf2e03a2-6ab4-420c-aac0-c2069539fdce" />
-
+> Apple Silicon system monitor for the terminal — real-time CPU, GPU, memory, network, battery, and thermal metrics. Built in Go. No root required for core metrics.
 
 ## Quick Start
 
@@ -52,18 +50,43 @@ sudo peaktop            # required for temperature, fan, and power metrics
 
 ## Features
 
-- **CPU** — Per-core usage with P/E cluster averages, core heatmap blocks (red/yellow/green/grey), per-core labels, frequency, 60-sample sparkline history
-- **GPU** — Usage gauge, active frequency, VRAM used/total, sparkline history
+- **CPU** — Per-core usage with P/E cluster averages, core heatmap blocks (red/yellow/green/grey), per-core labels, frequency, 60-sample sparkline
+- **GPU** — Usage gauge, active frequency, VRAM used/total, sparkline
 - **ANE** — Apple Neural Engine utilization (chip-dependent, shows "unavailable" when not exposed)
 - **Memory** — Wired/active/compressed bar with breakdown, swap usage, pressure percentage
 - **Network** — Total throughput plus per-interface RX/TX rates
 - **Disk** — Read/write bytes per second, IOPS
-- **Thermal** — Pressure level with percentage, CPU/GPU die temperatures, fan RPM bars with history sparkline
+- **Thermal** — Pressure level with percentage, CPU/GPU temperatures, fan RPM bars with history sparkline
 - **Battery** — Charge level, charging status, health (with effective mAh when degraded), cycle count, time remaining
 - **Power** — Package/CPU/GPU/ANE/DRAM wattage breakdown (sudo required)
 - **Alerts** — Configurable thresholds for thermal, battery, memory, GPU with cooldown periods
 - **Themes** — Dark, Light, and Dracula — toggle at runtime or set in config
 - **CSV Logging** — All metrics saved to `~/.peaktop/logs/YYYY-MM-DD.csv`, prompt to save or discard on quit
+
+## Comparison
+
+| Feature | peaktop | asitop | btop | htop |
+|---|---|---|---|---|
+| CPU P/E-core breakdown | ✅ | ✅ | ❌ | ❌ |
+| Per-core heatmap | ✅ | ❌ | ❌ | ❌ |
+| GPU usage + frequency | ✅ | ✅ | ✅ Basic | ❌ |
+| GPU VRAM | ✅ | ❌ | ❌ | ❌ |
+| ANE usage | ✅ Chip-dependent | ✅ Via power | ❌ | ❌ |
+| Memory + swap | ✅ | ✅ | ✅ | ❌ Swap only |
+| Network per-interface | ✅ | ❌ | ✅ | ❌ |
+| Disk IO | ✅ | ❌ | ✅ | ❌ |
+| Power breakdown (W) | ✅ Sudo | ✅ Sudo | ❌ | ❌ |
+| Thermal pressure | ✅ | ❌ | ❌ | ❌ |
+| Fan RPM + bars | ✅ Sudo, M-series | ❌ | ❌ | ❌ |
+| Battery health + cycles | ✅ | ❌ | ✅ Basic bar | ❌ |
+| Process list | ✅ CPU% + MEM% | ❌ | ✅ Full | ✅ Full |
+| Alert engine | ✅ | ❌ | ❌ | ❌ |
+| CSV session export | ✅ | ❌ | ❌ | ❌ |
+| Tabbed interface | ✅ 5 tabs | ❌ Single | ❌ Layout | ❌ |
+| Themes | ✅ 3 | ✅ 8 | ✅ 20+ | ❌ |
+| Mouse support | ❌ | ❌ | ✅ | ❌ |
+| Cross-platform | ❌ Apple Silicon only | ❌ macOS only | ✅ | ✅ |
+| No root for core metrics | ✅ | ❌ Sudo always | ✅ | ✅ |
 
 ## CSV Logs
 
@@ -96,7 +119,7 @@ Valid themes: `dark`, `light`, `dracula`. You can also cycle themes with the `t`
 
 **M-series Macs** (M1/M2/M3/M4) — Full feature set. Run with `sudo` for temperatures, fan speeds, and power metrics.
 
-**A-series Neo devices** (A14–A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Thermal pressure (`kern.thermalpressure`) is unavailable and shows "N/A". ANE may show "unavailable" if performance counters aren't exposed. These devices use passive cooling (no fans). Process visibility is limited compared to macOS.
+**A-series Neo devices** (A14–A18 Pro) — CPU, GPU, memory, network, disk, battery, and alerts work without sudo. Thermal pressure (`kern.thermalpressure`) is unavailable and shows "N/A". ANE may show "unavailable" if performance counters aren't exposed. These devices use passive cooling (no fans). Process visibility may be limited compared to macOS.
 
 ## License
 
