@@ -12,6 +12,9 @@ type CPUStats struct {
 	PCoreAvg     float64
 	SCoreAvg     float64
 	FrequencyMHz float64
+	CoreCount    int
+	ECoreCount   int
+	PCoreCount   int
 }
 
 type GPUStats struct {
@@ -48,6 +51,8 @@ type DiskStats struct {
 	ReadBytesPerSec  float64
 	WriteBytesPerSec float64
 	IOPS             float64
+	TotalBytes       uint64
+	FreeBytes        uint64
 }
 
 type PowerStats struct {

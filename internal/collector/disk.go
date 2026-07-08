@@ -70,6 +70,12 @@ func (c *DiskCollector) Collect() error {
 		IOPS:             iopRate,
 	}
 
+	if c.stats.TotalBytes == 0 {
+		total, free := apple.GetDiskCapacity()
+		c.stats.TotalBytes = total
+		c.stats.FreeBytes = free
+	}
+
 	return nil
 }
 

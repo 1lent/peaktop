@@ -7,6 +7,19 @@ package apple
 #include <CoreFoundation/CoreFoundation.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
+#include <sys/mount.h>
+
+static void diskStatfs(const char *path, uint64_t *total, uint64_t *free) {
+	struct statfs buf;
+	if (statfs(path, &buf) == 0) {
+		*total = (uint64_t)buf.f_blocks * (uint64_t)buf.f_bsize;
+		*free  = (uint64_t)buf.f_bfree  * (uint64_t)buf.f_bsize;
+	} else {
+		*total = 0;
+		*free  = 0;
+	}
+}
 
 static CFTypeRef diskCopyProperty(io_registry_entry_t entry, const char *keyStr) {
 	CFStringRef cfKey = CFStringCreateWithCString(kCFAllocatorDefault, keyStr, kCFStringEncodingUTF8);
@@ -39,6 +52,14 @@ import (
 )
 
 const diskIOKitClass = "IOBlockStorageDriver"
+
+func GetDiskCapacity() (totalBytes uint64, freeBytes uint64) {
+	path := C.CString("/")
+	defer C.free(unsafe.Pointer(path))
+	var total, free C.uint64_t
+	C.diskStatfs(path, &total, &free)
+	return uint64(total), uint64(free)
+}
 
 func GetDiskStats() (readBytes uint64, writeBytes uint64, err error) {
 	cName := C.CString(diskIOKitClass)

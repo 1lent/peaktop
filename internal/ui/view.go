@@ -149,6 +149,8 @@ func (m *Model) renderOverview() string {
 	thermal := m.thermal.Stats()
 	battery := m.battery.Stats()
 	net := m.network.Stats()
+	disk := m.disk.Stats()
+	power := m.power.Stats()
 
 	colWidth := m.width / 2
 	if colWidth < 30 {
@@ -156,16 +158,17 @@ func (m *Model) renderOverview() string {
 	}
 
 	leftCol := lipgloss.JoinVertical(lipgloss.Top,
-		m.styles.section.Render("CPU"),
+		m.styles.section.Render(m.renderCPUTitle(cpu)),
 		widgets.RenderGauge("Total", cpu.UsagePercent, colWidth),
 		widgets.RenderGauge("P-Cluster", cpu.PCoreAvg, colWidth),
 		widgets.RenderGauge("E-Cluster", cpu.ECoreAvg, colWidth),
 		m.renderCoreBars(cpu),
+		m.renderCPUTemps(thermal, cpu),
 		m.renderSparklineBlock("CPU History", m.cpuHistory, colWidth),
 		"",
 		m.styles.section.Render("GPU"),
 		widgets.RenderGauge("Usage", gpu.UsagePercent, colWidth),
-		m.renderGPUDetail(gpu),
+		m.renderGPUDetail(gpu, thermal),
 		m.renderSparklineBlock("GPU History", m.gpuHistory, colWidth),
 		"",
 		m.styles.section.Render("ANE"),
@@ -176,6 +179,9 @@ func (m *Model) renderOverview() string {
 		m.styles.section.Render("Memory"),
 		m.renderMemoryBar(mem, colWidth),
 		"",
+		m.styles.section.Render("Storage"),
+		m.renderDiskStorage(disk),
+		"",
 		m.styles.section.Render("Network"),
 		m.renderNetworkDetail(net, colWidth),
 		"",
@@ -184,6 +190,7 @@ func (m *Model) renderOverview() string {
 		"",
 		m.renderBatteryBlock(battery),
 		"",
+		m.renderPowerBlock(power),
 		m.renderFPSLabel(),
 	)
 
@@ -441,15 +448,92 @@ func (m *Model) coreBlock(pct float64) string {
 	}
 }
 
-func (m *Model) renderGPUDetail(gpu types.GPUStats) string {
+func (m *Model) renderGPUTemps(thermal types.ThermalStats) string {
+	if thermal.GPUTempC <= 0 {
+		return ""
+	}
+	return fmt.Sprintf("  GPU Temp: %.1f°C", thermal.GPUTempC)
+}
+
+func (m *Model) renderCPUTitle(cpu types.CPUStats) string {
+	if cpu.CoreCount == 0 {
+		return "CPU"
+	}
+	return fmt.Sprintf("CPU (%dP + %dE = %d cores)", cpu.PCoreCount, cpu.ECoreCount, cpu.CoreCount)
+}
+
+func (m *Model) renderCPUTemps(thermal types.ThermalStats, cpu types.CPUStats) string {
+	var parts []string
+	if thermal.CputempC > 0 {
+		parts = append(parts, fmt.Sprintf("CPU Temp: %.1f°C", thermal.CputempC))
+	}
+	if cpu.FrequencyMHz > 0 {
+		parts = append(parts, fmt.Sprintf("Freq: %.0f MHz", cpu.FrequencyMHz))
+	}
+	if len(parts) == 0 {
+		return ""
+	}
+	return "  " + strings.Join(parts, "  ")
+}
+
+func (m *Model) renderGPUDetail(gpu types.GPUStats, thermal types.ThermalStats) string {
 	var parts []string
 	if gpu.ActiveMHz > 0 {
-		parts = append(parts, fmt.Sprintf("  Freq: %.0f MHz", gpu.ActiveMHz))
+		parts = append(parts, fmt.Sprintf("Freq: %.0f MHz", gpu.ActiveMHz))
+	}
+	if thermal.GPUTempC > 0 {
+		parts = append(parts, fmt.Sprintf("Temp: %.1f°C", thermal.GPUTempC))
 	}
 	if gpu.VRAMTotalMB > 0 {
-		parts = append(parts, fmt.Sprintf("  VRAM: %d / %d MB", gpu.VRAMUsedMB, gpu.VRAMTotalMB))
+		parts = append(parts, fmt.Sprintf("VRAM: %d / %d MB", gpu.VRAMUsedMB, gpu.VRAMTotalMB))
 	}
-	return strings.Join(parts, "\n")
+	if len(parts) == 0 {
+		return ""
+	}
+	return "  " + strings.Join(parts, "  ")
+}
+
+func (m *Model) renderDiskStorage(disk types.DiskStats) string {
+	if disk.TotalBytes == 0 {
+		return dimText("  disk info unavailable")
+	}
+	used := disk.TotalBytes - disk.FreeBytes
+	usedStr := formatBytes(used)
+	totalStr := formatBytes(disk.TotalBytes)
+	return fmt.Sprintf("  %s / %s used", usedStr, totalStr)
+}
+
+func (m *Model) renderPowerBlock(power types.PowerStats) string {
+	if power.PackageWatts <= 0 && power.CPUWatts <= 0 {
+		return ""
+	}
+	var parts []string
+	if power.PackageWatts > 0 {
+		parts = append(parts, fmt.Sprintf("Pkg: %.2f W", power.PackageWatts))
+	}
+	if power.CPUWatts > 0 {
+		parts = append(parts, fmt.Sprintf("CPU: %.2f W", power.CPUWatts))
+	}
+	if power.GPUWatts > 0 {
+		parts = append(parts, fmt.Sprintf("GPU: %.2f W", power.GPUWatts))
+	}
+	if len(parts) == 0 {
+		return ""
+	}
+	return m.styles.section.Render("Power") + "\n  " + strings.Join(parts, "  ")
+}
+
+func formatBytes(b uint64) string {
+	switch {
+	case b >= 1<<40:
+		return fmt.Sprintf("%.1f TB", float64(b)/(1<<40))
+	case b >= 1<<30:
+		return fmt.Sprintf("%.1f GB", float64(b)/(1<<30))
+	case b >= 1<<20:
+		return fmt.Sprintf("%.1f MB", float64(b)/(1<<20))
+	default:
+		return fmt.Sprintf("%d KB", b/(1<<10))
+	}
 }
 
 func (m *Model) renderFPSLabel() string {

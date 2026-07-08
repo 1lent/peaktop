@@ -96,6 +96,9 @@ func (c *CPUCollector) Collect() error {
 		PCoreAvg:     safeDivide(pCoreTotal, float64(pCoreCount)),
 		SCoreAvg:     safeDivide(sCoreTotal, float64(sCoreCount)),
 		FrequencyMHz: freqMHz,
+		CoreCount:    info.CoreCount,
+		ECoreCount:   eCoreCount,
+		PCoreCount:   pCoreCount,
 	}
 
 	return nil
