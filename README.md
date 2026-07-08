@@ -33,7 +33,7 @@ sudo peaktop         # enables power metrics (powermetrics requires root)
 | `t` | Cycle theme (Dark → Light → Dracula) |
 | `+` / `-` | Faster / slower tick rate |
 | `h` | Toggle help |
-| `q` / `Ctrl+C` | Quit |
+| `q` / `Ctrl+C` | Quit (with save/discard confirmation) |
 
 ## Tabs
 
@@ -55,6 +55,10 @@ sudo peaktop         # enables power metrics (powermetrics requires root)
 - 3 themes (Dark, Light, Dracula) via `~/.peaktop/config.json` or `t` key
 - Power metrics with `sudo` (CPU/GPU/ANE/DRAM watts via powermetrics)
 
+## CSV Logs
+
+Session data is saved to `~/.peaktop/logs/YYYY-MM-DD.csv`. On quit, you can choose to save or discard the session log. Columns include CPU%, GPU%, memory, swap, battery, network throughput, and more.
+
 ## Config
 
 Create `~/.peaktop/config.json`:
@@ -63,8 +67,11 @@ Create `~/.peaktop/config.json`:
 {"theme": "dracula"}
 ```
 
+Valid themes: `dark`, `light`, `dracula`. You can also cycle themes at runtime with the `t` key.
+
 ## Requirements
 
 - macOS 13+
 - Apple Silicon (arm64)
-- Go 1.22+
+- Go 1.21+ (to build from source)
+- `sudo` only needed for temperature, fan, and power metrics
