@@ -9,6 +9,10 @@ import (
 )
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if m.confirmQuit {
+		return m.handleQuitConfirm(msg)
+	}
+
 	switch msg := msg.(type) {
 	case tickMsg:
 		return m.handleTick()
@@ -170,7 +174,8 @@ func (m *Model) exportCSV() {
 func (m *Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "q", "ctrl+c":
-		return m.handleQuit()
+		m.confirmQuit = true
+		return m, nil
 
 	case "h":
 		m.showHelp = !m.showHelp
@@ -253,4 +258,24 @@ func (m *Model) handleQuit() (tea.Model, tea.Cmd) {
 		fmt.Fprintf(os.Stderr, "Session saved to %s (%d samples)\n", path, m.tickCount)
 	}
 	return m, tea.Quit
+}
+
+func (m *Model) handleQuitConfirm(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "y":
+			return m.handleQuit()
+		case "n":
+			m.quitting = true
+			_ = m.csvExporter.Close()
+			return m, tea.Quit
+		case "q", "ctrl+c", "esc":
+			m.confirmQuit = false
+			return m, nil
+		default:
+			return m, nil
+		}
+	}
+	return m, nil
 }

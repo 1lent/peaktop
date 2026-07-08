@@ -36,7 +36,7 @@ func (m *Model) View() string {
 
 	divider := dividerStyle.Render(strings.Repeat("─", m.width))
 
-	return lipgloss.JoinVertical(
+	main := lipgloss.JoinVertical(
 		lipgloss.Top,
 		header,
 		divider,
@@ -44,6 +44,12 @@ func (m *Model) View() string {
 		content,
 		footer,
 	)
+
+	if m.confirmQuit {
+		return m.renderQuitOverlay(main)
+	}
+
+	return main
 }
 
 func (m *Model) renderHeader() string {
@@ -501,4 +507,31 @@ func (m *Model) renderANEBlock(usage float64, firstErr error, colWidth int) stri
 
 func dimText(s string) string {
 	return lipgloss.NewStyle().Foreground(lipgloss.Color("240")).Render(s)
+}
+
+func (m *Model) renderQuitOverlay(main string) string {
+	dialogStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(m.theme.CPU)).
+		Padding(1, 2).
+		Align(lipgloss.Center)
+
+	dialog := dialogStyle.Render(
+		lipgloss.JoinVertical(lipgloss.Center,
+			m.styles.header.Render("Quit peaktop?"),
+			"",
+			fmt.Sprintf("  Logged %d samples to ~/.peaktop/logs/", m.tickCount),
+			"",
+			"  [y] save log & quit",
+			"  [n] quit without saving",
+			"  [esc] cancel",
+		),
+	)
+
+	return lipgloss.Place(
+		m.width, m.height,
+		lipgloss.Center, lipgloss.Center,
+		dialog,
+		lipgloss.WithWhitespaceChars(" "),
+	)
 }

@@ -56,6 +56,7 @@ type Model struct {
 	selectedProc int
 	showHelp     bool
 	quitting     bool
+	confirmQuit  bool
 	width        int
 	height       int
 	tickCount    int
