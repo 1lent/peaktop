@@ -41,9 +41,10 @@ type Model struct {
 	battery  *collector.BatteryCollector
 	procList *process.ProcessList
 
-	cpuHistory *throttle.RingBuffer
-	gpuHistory *throttle.RingBuffer
-	aneHistory *throttle.RingBuffer
+	cpuHistory  *throttle.RingBuffer
+	gpuHistory  *throttle.RingBuffer
+	aneHistory  *throttle.RingBuffer
+	fanHistory  *throttle.RingBuffer
 
 	alertEngine *alert.AlertEngine
 	alerts      []types.AlertEvent
@@ -121,9 +122,10 @@ func NewModel(interval time.Duration) Model {
 		battery:  collector.NewBatteryCollector(),
 		procList: process.NewProcessList(),
 
-		cpuHistory: throttle.NewRingBuffer(ringBufferSize),
-		gpuHistory: throttle.NewRingBuffer(ringBufferSize),
-		aneHistory: throttle.NewRingBuffer(ringBufferSize),
+		cpuHistory:  throttle.NewRingBuffer(ringBufferSize),
+		gpuHistory:  throttle.NewRingBuffer(ringBufferSize),
+		aneHistory:  throttle.NewRingBuffer(ringBufferSize),
+		fanHistory:  throttle.NewRingBuffer(ringBufferSize),
 
 		alertEngine: alert.NewAlertEngine(),
 

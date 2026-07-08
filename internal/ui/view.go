@@ -215,12 +215,14 @@ func (m *Model) renderThermal() string {
 		parts = append(parts, "",
 			m.styles.section.Render("Fan Speeds"),
 			m.renderFanDetail(thermal),
+			m.renderSparklineBlock("Fan History", m.fanHistory, m.width),
 		)
 	} else {
 		msg := "  no fans (SMC not available on Apple Silicon)"
 		if strings.Contains(m.detectChipName(), "A1") || strings.Contains(m.detectChipName(), "A18") {
 			msg = "  no fans (passive cooling on Neo devices)"
 		}
+		msg += "\n  run with sudo for fan + temperature data"
 		parts = append(parts, "",
 			dimText(msg),
 		)
@@ -491,9 +493,21 @@ func (m *Model) renderTempBlock(thermal types.ThermalStats) string {
 }
 
 func (m *Model) renderFanDetail(thermal types.ThermalStats) string {
+	const maxRPM = 7000.0
+	const barWidth = 20
+	full := lipgloss.NewStyle().Foreground(lipgloss.Color("75"))
+	empty := lipgloss.NewStyle().Foreground(lipgloss.Color("238"))
+
 	var parts []string
 	for i, rpm := range thermal.FanRPMs {
-		parts = append(parts, fmt.Sprintf("  Fan %d: %.0f RPM", i, rpm))
+		ratio := rpm / maxRPM
+		if ratio > 1 {
+			ratio = 1
+		}
+		filled := int(ratio * barWidth)
+		bar := full.Render(strings.Repeat("█", filled))
+		bg := empty.Render(strings.Repeat("░", barWidth-filled))
+		parts = append(parts, fmt.Sprintf("  Fan %d: %s %6.0f RPM", i, bar+bg, rpm))
 	}
 	return strings.Join(parts, "\n")
 }

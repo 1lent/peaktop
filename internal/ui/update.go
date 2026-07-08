@@ -116,6 +116,10 @@ func (m *Model) collectThermal() {
 	if err := m.thermal.Collect(); err != nil {
 		return
 	}
+	thermalStats := m.thermal.Stats()
+	if len(thermalStats.FanRPMs) > 0 {
+		m.fanHistory.Push(thermalStats.FanRPMs[0])
+	}
 }
 
 func (m *Model) collectBattery() {

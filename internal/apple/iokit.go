@@ -36,6 +36,22 @@ static int64_t iokitDictGetInt64(CFTypeRef dict, const char *keyStr) {
 	return value;
 }
 
+static int64_t iokitReadPropertyInt(io_registry_entry_t entry, const char *keyStr) {
+	CFStringRef cfKey = CFStringCreateWithCString(kCFAllocatorDefault, keyStr, kCFStringEncodingUTF8);
+	if (!cfKey) return 0;
+	int64_t value = 0;
+	CFTypeRef result = IORegistryEntrySearchCFProperty(
+		entry, kIOServicePlane, cfKey, kCFAllocatorDefault, kIORegistryIterateRecursively);
+	if (result) {
+		if (CFGetTypeID(result) == CFNumberGetTypeID()) {
+			CFNumberGetValue((CFNumberRef)result, kCFNumberSInt64Type, &value);
+		}
+		CFRelease(result);
+	}
+	CFRelease(cfKey);
+	return value;
+}
+
 static CFTypeRef iokitCopyProperty(io_registry_entry_t entry, const char *keyStr) {
 	CFStringRef cfKey = CFStringCreateWithCString(kCFAllocatorDefault, keyStr, kCFStringEncodingUTF8);
 	if (!cfKey) return NULL;
@@ -73,33 +89,46 @@ func GetGPUStats() (*GPUStats, error) {
 }
 
 func getGPUVRAM() (uint64, uint64) {
-	cName := C.CString("IOGPU")
-	defer C.free(unsafe.Pointer(cName))
-	matcher := C.IOServiceMatching(cName)
-	if matcher == 0 {
-		return 0, 0
-	}
-	service := C.IOServiceGetMatchingService(C.kIOMainPortDefault, C.CFDictionaryRef(matcher))
-	if service == 0 {
-		return 0, 0
-	}
-	defer C.IOObjectRelease(C.io_object_t(service))
+	classes := []string{"IOGPU", "IOAccelerator", "AGXAccelerator"}
+	for _, className := range classes {
+		cName := C.CString(className)
+		matcher := C.IOServiceMatching(cName)
+		C.free(unsafe.Pointer(cName))
+		if matcher == 0 {
+			continue
+		}
+		service := C.IOServiceGetMatchingService(C.kIOMainPortDefault, C.CFDictionaryRef(matcher))
+		if service == 0 {
+			continue
+		}
+		defer C.IOObjectRelease(C.io_object_t(service))
 
-	perfKey := C.CString("PerformanceStatistics")
-	defer C.free(unsafe.Pointer(perfKey))
-	perfDict := C.iokitCopyProperty(C.io_registry_entry_t(service), perfKey)
-	if perfDict == 0 {
-		return 0, 0
-	}
-	defer C.CFRelease(perfDict)
+		entry := C.io_registry_entry_t(service)
 
-	vramTotalKey := C.CString("vramTotalBytes")
-	defer C.free(unsafe.Pointer(vramTotalKey))
-	vramUsedKey := C.CString("vramUsedBytes")
-	defer C.free(unsafe.Pointer(vramUsedKey))
-	vramTotal := uint64(C.iokitDictGetInt64(perfDict, vramTotalKey)) / (1024 * 1024)
-	vramUsed := uint64(C.iokitDictGetInt64(perfDict, vramUsedKey)) / (1024 * 1024)
-	return vramUsed, vramTotal
+		totalKey := C.CString("VRAM,totalMB")
+		vramTotal := uint64(C.iokitReadPropertyInt(entry, totalKey))
+		C.free(unsafe.Pointer(totalKey))
+
+		if vramTotal == 0 {
+			continue
+		}
+
+		perfKey := C.CString("PerformanceStatistics")
+		perfDict := C.iokitCopyProperty(entry, perfKey)
+		C.free(unsafe.Pointer(perfKey))
+
+		var vramFree uint64
+		if perfDict != 0 {
+			freeKey := C.CString("vramFreeBytes")
+			vramFree = uint64(C.iokitDictGetInt64(perfDict, freeKey)) / (1024 * 1024)
+			C.free(unsafe.Pointer(freeKey))
+			C.CFRelease(perfDict)
+		}
+
+		vramUsed := vramTotal - vramFree
+		return vramUsed, vramTotal
+	}
+	return 0, 0
 }
 
 // Battery and Disk IOKit access moved to battery.go and disk.go respectively.
