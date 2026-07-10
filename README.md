@@ -9,19 +9,9 @@
 ## Quick Start
 
 ```bash
-go install github.com/1lent/peaktop@latest
+go install github.com/1lent/peaktop@latest && sudo cp $(go env GOPATH)/bin/peaktop /usr/local/bin/
 peaktop
 ```
-
-If `peaktop: command not found`, add Go's bin directory to your PATH:
-
-```bash
-export PATH=$PATH:$(go env GOPATH)/bin
-# or on most systems:
-export PATH=$PATH:$HOME/go/bin
-```
-
-Add that line to `~/.zshrc` or `~/.bashrc` to make it permanent.
 
 Or clone and build:
 
