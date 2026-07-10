@@ -21,6 +21,9 @@ echo 'export PATH="$HOME/go/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 
 This adds Go's binary directory to your PATH (so your shell can find `peaktop` and any other Go tools you install). Then `peaktop` will work.
 
+
+
+
 Or clone and build:
 
 ```bash
