@@ -9,9 +9,17 @@
 ## Quick Start
 
 ```bash
-go install github.com/1lent/peaktop@latest
+go install github.com/1lent/peaktop/cmd/peaktop@latest
 peaktop
 ```
+
+If you get `zsh: command not found: peaktop`, Go installed it to `~/go/bin/` which isn't in your shell's PATH yet. Run this once:
+
+```bash
+echo 'export PATH="$HOME/go/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+This adds Go's binary directory to your PATH (so your shell can find `peaktop` and any other Go tools you install). Then `peaktop` will work.
 
 Or clone and build:
 
