@@ -9,7 +9,7 @@
 ## Quick Start
 
 ```bash
-go install github.com/1lent/peaktop@latest && sudo cp $(go env GOPATH)/bin/peaktop /usr/local/bin/
+go install github.com/1lent/peaktop@latest
 peaktop
 ```
 
