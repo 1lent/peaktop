@@ -183,6 +183,12 @@ func chipToTNumber(chipName string) string {
 		return "T8122"
 	case strings.Contains(chipName, "M2"):
 		return "T8112"
+	case strings.Contains(chipName, "M1 Pro") || strings.Contains(chipName, "M1Pro"):
+		return "T6000"
+	case strings.Contains(chipName, "M1 Max") || strings.Contains(chipName, "M1Max"):
+		return "T6001"
+	case strings.Contains(chipName, "M1 Ultra") || strings.Contains(chipName, "M1Ultra"):
+		return "T6002"
 	case strings.Contains(chipName, "M1"):
 		return "T8103"
 	}
