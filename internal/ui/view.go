@@ -145,7 +145,6 @@ func (m *Model) renderFooter() string {
 func (m *Model) renderOverview() string {
 	cpu := m.cpu.Stats()
 	gpu := m.gpu.Stats()
-	ane := m.ane.Stats()
 	mem := m.memory.Stats()
 	thermal := m.thermal.Stats()
 	battery := m.battery.Stats()
@@ -173,7 +172,7 @@ func (m *Model) renderOverview() string {
 		m.renderSparklineBlock("GPU History", m.gpuHistory, colWidth),
 		"",
 		m.styles.section.Render("ANE"),
-		m.renderANEBlock(ane.UsagePercent, m.ane.FirstError(), colWidth),
+		m.renderANEBlock(power),
 	)
 
 	rightCol := lipgloss.JoinVertical(lipgloss.Top,
@@ -464,13 +463,6 @@ func sortedCoreNames(perCore map[string]float64) []string {
 	return append(append(pNames, eNames...), other...)
 }
 
-func (m *Model) renderGPUTemps(thermal types.ThermalStats) string {
-	if thermal.GPUTempC <= 0 {
-		return ""
-	}
-	return fmt.Sprintf("  GPU Temp: %.1f°C", thermal.GPUTempC)
-}
-
 func (m *Model) renderCPUTitle(cpu types.CPUStats) string {
 	if cpu.CoreCount == 0 {
 		return "CPU"
@@ -479,17 +471,10 @@ func (m *Model) renderCPUTitle(cpu types.CPUStats) string {
 }
 
 func (m *Model) renderCPUTemps(thermal types.ThermalStats, cpu types.CPUStats) string {
-	var parts []string
-	if thermal.CputempC > 0 {
-		parts = append(parts, fmt.Sprintf("CPU Temp: %.1f°C", thermal.CputempC))
-	}
-	if cpu.FrequencyMHz > 0 {
-		parts = append(parts, fmt.Sprintf("Freq: %.0f MHz", cpu.FrequencyMHz))
-	}
-	if len(parts) == 0 {
+	if thermal.CputempC <= 0 {
 		return ""
 	}
-	return "  " + strings.Join(parts, "  ")
+	return fmt.Sprintf("  CPU Temp: %.1f°C", thermal.CputempC)
 }
 
 func (m *Model) renderGPUDetail(gpu types.GPUStats, thermal types.ThermalStats) string {
@@ -617,11 +602,14 @@ func (m *Model) renderFanDetail(thermal types.ThermalStats) string {
 	return strings.Join(parts, "\n")
 }
 
-func (m *Model) renderANEBlock(usage float64, firstErr error, colWidth int) string {
-	if firstErr != nil {
+func (m *Model) renderANEBlock(power types.PowerStats) string {
+	if m.ane.FirstError() != nil {
 		return dimText("  ANE data not available on this device")
 	}
-	return widgets.RenderGauge("Usage", usage, colWidth)
+	if power.ANEWatts > 0 {
+		return fmt.Sprintf("  ANE Power: %.2f W", power.ANEWatts)
+	}
+	return dimText("  ANE: requires sudo for power data")
 }
 
 func dimText(s string) string {
